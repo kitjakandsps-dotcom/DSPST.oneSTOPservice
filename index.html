@@ -60,7 +60,20 @@
   // เปิดหน้า GitHub นี้พร้อม ?page=admin จะได้หน้าผู้ดูแล ลิงก์บนแถบที่อยู่จึงเป็นของ GitHub ทั้งหมด
   var page = new URLSearchParams(location.search).get('page');
   var isAdmin = page === 'admin';
-  document.getElementById('app').src = APP_URL + (isAdmin ? '?page=admin' : '');
+  // via=github บอกเว็บแอปว่าเปิดผ่านหน้านี้ เวลากดลิงก์ เว็บแอปจะขอให้หน้านี้เป็นผู้เปิดแทน
+  document.getElementById('app').src = APP_URL + '?via=github' + (isAdmin ? '&page=admin' : '');
+
+  // รับคำขอเปิดลิงก์จากเว็บแอป (เฉพาะที่ส่งมาจากโดเมนของ Google Apps Script และเป็นลิงก์ https เท่านั้น)
+  window.addEventListener('message', function (e) {
+    var data = e.data || {};
+    if (data.type !== 'dsps-hub-open' || typeof data.url !== 'string') return;
+    var host = '';
+    try { host = new URL(e.origin).hostname; } catch (err) { return; }
+    if (!/(^|\.)googleusercontent\.com$/.test(host)) return;
+    if (!/^https:\/\//i.test(data.url)) return;
+    try { e.source.postMessage({ type: 'dsps-hub-opening', url: data.url }, e.origin); } catch (err) {}
+    location.assign(data.url);
+  });
   if (isAdmin) {
     document.title = 'หน้าผู้ดูแล รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี';
     var robots = document.createElement('meta');
