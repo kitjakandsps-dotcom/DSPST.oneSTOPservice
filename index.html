@@ -63,10 +63,25 @@
   // via=github บอกเว็บแอปว่าเปิดผ่านหน้านี้ เวลากดลิงก์ เว็บแอปจะขอให้หน้านี้เป็นผู้เปิดแทน
   document.getElementById('app').src = APP_URL + '?via=github' + (isAdmin ? '&page=admin' : '');
 
-  // รับคำขอเปิดลิงก์จากเว็บแอป (เฉพาะที่ส่งมาจากโดเมนของ Google Apps Script และเป็นลิงก์ https เท่านั้น)
+  // ตรวจว่าผู้ส่งคือกรอบเว็บแอปที่ฝังอยู่ในหน้านี้เอง (Apps Script ซ้อนกรอบหลายชั้น จึงไล่หาลงไป)
+  // เว็บอื่นที่เปิดหน้านี้เป็นหน้าต่างใหม่จึงสั่งให้หน้านี้เปลี่ยนไปเว็บอื่นไม่ได้
+  function isOwnFrame(source) {
+    function walk(win, depth) {
+      if (depth > 5) return false;
+      for (var i = 0; i < win.frames.length; i++) {
+        var child = win.frames[i];
+        if (child === source || walk(child, depth + 1)) return true;
+      }
+      return false;
+    }
+    try { return walk(window, 0); } catch (err) { return false; }
+  }
+
+  // รับคำขอเปิดลิงก์จากเว็บแอป: ต้องมาจากกรอบของหน้านี้ จากโดเมนของ Google Apps Script และเป็นลิงก์ https เท่านั้น
   window.addEventListener('message', function (e) {
     var data = e.data || {};
     if (data.type !== 'dsps-hub-open' || typeof data.url !== 'string') return;
+    if (!isOwnFrame(e.source)) return;
     var host = '';
     try { host = new URL(e.origin).hostname; } catch (err) { return; }
     if (!/(^|\.)googleusercontent\.com$/.test(host)) return;
