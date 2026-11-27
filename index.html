@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี</title>
+<meta name="description" content="รวมลิงก์ระบบงานของโรงเรียนเทพศิรินทร์พุแค สระบุรี ผู้พัฒนาระบบ นายนิมิต ศรีวัฒนะ">
+<meta name="author" content="นายนิมิต ศรีวัฒนะ">
+<meta name="theme-color" content="#17603A">
+
+<!-- ไฟล์ที่ต้องอัปโหลดไว้โฟลเดอร์เดียวกับไฟล์นี้: logo.png และ apple-touch-icon.png -->
+<link rel="icon" type="image/png" sizes="512x512" href="logo.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+<link id="appManifest" rel="manifest">
+<meta name="application-name" content="รวมระบบงาน">
+<meta name="apple-mobile-web-app-title" content="รวมระบบงาน">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- ตัวอย่างลิงก์เวลาแชร์ใน LINE / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="รวมระบบงาน">
+<meta property="og:description" content="โรงเรียนเทพศิรินทร์พุแค สระบุรี">
+<meta property="og:image" content="logo.png">
+
+<script>
+  // สร้างข้อมูลแอป (manifest) ในไฟล์นี้เลย ไม่ต้องมีไฟล์ manifest.json แยก
+  // ทำให้ Android และ Chrome ใช้ logo.png เป็นไอคอนตอนเพิ่มไปหน้าจอโฮมหรือติดตั้งเป็นแอป
+  (function () {
+    var base = new URL('./', location.href).href;
+    var manifest = {
+      name: 'รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี',
+      short_name: 'รวมระบบงาน',
+      start_url: base,
+      scope: base,
+      display: 'standalone',
+      background_color: '#F3F7F2',
+      theme_color: '#17603A',
+      icons: [
+        { src: new URL('logo.png', base).href, sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: new URL('apple-touch-icon.png', base).href, sizes: '180x180', type: 'image/png', purpose: 'any' }
+      ]
+    };
+    var blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+    document.getElementById('appManifest').href = URL.createObjectURL(blob);
+  })();
+</script>
+<style>
+  html, body { margin: 0; height: 100%; background: #F3F7F2; }
+  @media (prefers-color-scheme: dark) { html, body { background: #0E1411; } }
+  iframe { display: block; width: 100%; height: 100vh; height: 100dvh; border: 0; }
+</style>
+</head>
+<body>
+<!-- เปลี่ยนลิงก์ด้านล่างเป็นลิงก์เว็บแอป Apps Script ที่ลงท้ายด้วย /exec -->
+<iframe src="https://script.google.com/macros/s/ใส่รหัสเว็บแอปตรงนี้/exec"
+        title="รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี"
+        allow="clipboard-write"></iframe>
+</body>
+</html>
