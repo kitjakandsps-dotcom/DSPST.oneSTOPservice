@@ -52,9 +52,22 @@
 </style>
 </head>
 <body>
-<!-- เปลี่ยนลิงก์ด้านล่างเป็นลิงก์เว็บแอป Apps Script ที่ลงท้ายด้วย /exec -->
-<iframe src="https://script.google.com/macros/s/AKfycbyTZwYOU4uGP2Y-y4tZlASts5x833WLi2UbPwVHy9RDmBFDw4EqfnYqFPuU6lkn_tpoIg/exec"
-        title="รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี"
-        allow="clipboard-write"></iframe>
+<iframe id="app" title="รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี" allow="clipboard-write"></iframe>
+<script>
+  // ลิงก์เว็บแอป Apps Script: คัดลอกมาทั้งลิงก์ รวมส่วน /a/macros/debsirinphukhae.ac.th
+  var APP_URL = 'https://script.google.com/a/macros/debsirinphukhae.ac.th/s/AKfycbyTZwYOU4uGP2Y-y4tZlASts5x833WLi2UbPwVHy9RDmBFDw4EqfnYqFPuU6lkn_tpoIg/exec';
+
+  // เปิดหน้า GitHub นี้พร้อม ?page=admin จะได้หน้าผู้ดูแล ลิงก์บนแถบที่อยู่จึงเป็นของ GitHub ทั้งหมด
+  var page = new URLSearchParams(location.search).get('page');
+  var isAdmin = page === 'admin';
+  document.getElementById('app').src = APP_URL + (isAdmin ? '?page=admin' : '');
+  if (isAdmin) {
+    document.title = 'หน้าผู้ดูแล รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี';
+    var robots = document.createElement('meta');
+    robots.name = 'robots';
+    robots.content = 'noindex';
+    document.head.appendChild(robots);
+  }
+</script>
 </body>
 </html>
