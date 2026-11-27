@@ -1,102 +1,915 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+<base target="_top">
 <meta charset="utf-8">
+<meta name="color-scheme" content="light dark">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี</title>
 <meta name="description" content="รวมลิงก์ระบบงานของโรงเรียนเทพศิรินทร์พุแค สระบุรี ผู้พัฒนาระบบ นายนิมิต ศรีวัฒนะ">
 <meta name="author" content="นายนิมิต ศรีวัฒนะ">
 <meta name="theme-color" content="#17603A">
+<script>
+  /* ==========================================================================
+   * ไฟล์นี้ใช้ได้ 2 ที่ (ไฟล์เดียวกัน ไม่ต้องแก้แยก)
+   * 1) GitHub Pages ชื่อ index.html  : หน้าเว็บหลัก ขอข้อมูลจาก Apps Script แบบไม่ส่งข้อมูลล็อกอิน
+   * 2) Apps Script ชื่อ Index.html   : ลิงก์สำรอง /exec (Apps Script ใส่ข้อมูลมาให้เอง)
+   * ผู้พัฒนาระบบ: นายนิมิต ศรีวัฒนะ โรงเรียนเทพศิรินทร์พุแค สระบุรี
+   * ========================================================================== */
 
-<!-- ไฟล์ที่ต้องอัปโหลดไว้โฟลเดอร์เดียวกับไฟล์นี้: logo.png และ apple-touch-icon.png -->
-<link rel="icon" type="image/png" sizes="512x512" href="logo.png">
-<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
-<link id="appManifest" rel="manifest">
-<meta name="application-name" content="รวมระบบงาน">
+  // ตั้งค่า: รหัสเว็บแอป Apps Script (ส่วนระหว่าง /s/ กับ /exec ในลิงก์เว็บแอป) และโดเมนของโรงเรียน
+  var APP_ID = 'AKfycbyTZwYOU4uGP2Y-y4tZlASts5x833WLi2UbPwVHy9RDmBFDw4EqfnYqFPuU6lkn_tpoIg';
+  var APP_DOMAIN = 'debsirinphukhae.ac.th';
+
+  // ---- ไม่ต้องแก้ส่วนล่างนี้ ----
+  var BOOT = /*BOOT*/null;
+  var IN_GAS = !!BOOT;
+  var PAGE = IN_GAS ? BOOT.page : (new URLSearchParams(location.search).get('page') === 'admin' ? 'admin' : 'hub');
+  // ลองลิงก์แรกก่อน ถ้าขอข้อมูลไม่ได้จะลองลิงก์ที่สอง
+  var API_URLS = [
+    'https://script.google.com/macros/s/' + APP_ID + '/exec',
+    'https://script.google.com/a/macros/' + APP_DOMAIN + '/s/' + APP_ID + '/exec'
+  ];
+  var BACKUP_URL = IN_GAS ? BOOT.execUrl : API_URLS[0];
+
+  // หน้าผู้ดูแลบน GitHub จะเพิ่มในส่วนที่ 2 ระหว่างนี้พาไปหน้าผู้ดูแลที่ลิงก์สำรอง
+  if (!IN_GAS && PAGE === 'admin') location.replace(API_URLS[0] + '?page=admin');
+
+  // ไอคอนแท็บ ไอคอนหน้าจอโฮม และข้อมูลติดตั้งเป็นแอป (ใช้เฉพาะบน GitHub ที่มีไฟล์ logo.png)
+  if (!IN_GAS) {
+    (function () {
+      var base = new URL('./', location.href).href;
+      function addLink(rel, href, sizes) {
+        var link = document.createElement('link');
+        link.rel = rel;
+        link.href = href;
+        if (sizes) link.sizes = sizes;
+        document.head.appendChild(link);
+      }
+      addLink('icon', base + 'logo.png', '512x512');
+      addLink('apple-touch-icon', base + 'apple-touch-icon.png', '180x180');
+      var manifest = {
+        name: 'รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี',
+        short_name: 'รวมระบบงาน',
+        start_url: base,
+        scope: base,
+        display: 'standalone',
+        background_color: '#F3F7F2',
+        theme_color: '#17603A',
+        icons: [
+          { src: base + 'logo.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: base + 'apple-touch-icon.png', sizes: '180x180', type: 'image/png', purpose: 'any' }
+        ]
+      };
+      var blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
+      addLink('manifest', URL.createObjectURL(blob));
+    })();
+  }
+</script>
 <meta name="apple-mobile-web-app-title" content="รวมระบบงาน">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
-
-<!-- ตัวอย่างลิงก์เวลาแชร์ใน LINE / Facebook -->
 <meta property="og:type" content="website">
 <meta property="og:title" content="รวมระบบงาน">
 <meta property="og:description" content="โรงเรียนเทพศิรินทร์พุแค สระบุรี">
-<meta property="og:image" content="logo.png">
-
-<script>
-  // สร้างข้อมูลแอป (manifest) ในไฟล์นี้เลย ไม่ต้องมีไฟล์ manifest.json แยก
-  // ทำให้ Android และ Chrome ใช้ logo.png เป็นไอคอนตอนเพิ่มไปหน้าจอโฮมหรือติดตั้งเป็นแอป
-  (function () {
-    var base = new URL('./', location.href).href;
-    var manifest = {
-      name: 'รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี',
-      short_name: 'รวมระบบงาน',
-      start_url: base,
-      scope: base,
-      display: 'standalone',
-      background_color: '#F3F7F2',
-      theme_color: '#17603A',
-      icons: [
-        { src: new URL('logo.png', base).href, sizes: '512x512', type: 'image/png', purpose: 'any' },
-        { src: new URL('apple-touch-icon.png', base).href, sizes: '180x180', type: 'image/png', purpose: 'any' }
-      ]
-    };
-    var blob = new Blob([JSON.stringify(manifest)], { type: 'application/manifest+json' });
-    document.getElementById('appManifest').href = URL.createObjectURL(blob);
-  })();
-</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anuphan:wght@100..700&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3/dist/tabler-icons.min.css" rel="stylesheet">
 <style>
-  html, body { margin: 0; height: 100%; background: #F3F7F2; }
-  @media (prefers-color-scheme: dark) { html, body { background: #0E1411; } }
-  iframe { display: block; width: 100%; height: 100vh; height: 100dvh; border: 0; }
+  :root {
+    --bg: #F3F7F2;
+    --surface: #FFFFFF;
+    --text: #14201A;
+    --muted: #5B6A60;
+    --line: #DBE5DD;
+    --tint: #E4EFE7;
+    --green: #17603A;
+    --green-ink: #0E4428;
+    --yellow: #F2C230;
+    --focus: #0E4428;
+    --r-lg: 28px;
+    --r-md: 20px;
+    --r-sm: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0E1411;
+      --surface: #171F1A;
+      --text: #E9F0EA;
+      --muted: #9DAEA2;
+      --line: #27332B;
+      --tint: #1E2B23;
+      --green: #1F6B43;
+      --green-ink: #9FDDB8;
+      --focus: #F2C230;
+    }
+  }
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Anuphan', 'Noto Sans Thai', 'Leelawadee UI', 'Thonburi', system-ui, sans-serif;
+    font-size: 16px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 1160px;
+    margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left));
+    padding-right: max(16px, env(safe-area-inset-right));
+  }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  /* โลโก้ */
+  .hero-brand { display: flex; align-items: center; gap: clamp(14px, 2.4vw, 22px); }
+  .hero-logo {
+    flex: none; width: clamp(68px, 9vw, 104px); height: clamp(68px, 9vw, 104px);
+    padding: 6px; border-radius: 24px; background: #fff; object-fit: contain;
+  }
+
+  /* ปุ่ม QR บนการ์ด และหน้าต่าง QR */
+  .tile-wrap { position: relative; display: flex; min-width: 0; }
+  .tile-wrap .tile { flex: 1; min-width: 0; }
+  .tile { min-width: 0; }
+  .tile-name { overflow-wrap: anywhere; }
+  .qr-open {
+    position: absolute; top: 12px; right: 12px;
+    width: 38px; height: 38px; border-radius: 12px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--muted);
+    display: grid; place-items: center; font-size: 20px; cursor: pointer;
+  }
+  .qr-open:hover { color: var(--green-ink); border-color: var(--green-ink); }
+  .footer-links { display: flex; flex-wrap: wrap; gap: 6px 20px; }
+  .link-btn { padding: 0; border: 0; background: none; font: inherit; color: var(--green-ink); text-decoration: underline; cursor: pointer; }
+
+  .qr-dialog {
+    width: min(420px, calc(100vw - 24px)); max-height: calc(100vh - 24px);
+    padding: 0; border: 1px solid var(--line); border-radius: 28px;
+    background: var(--surface); color: var(--text);
+  }
+  .qr-dialog::backdrop { background: rgba(8, 20, 14, .6); }
+  .qr-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; padding: 20px 20px 0; }
+  .qr-head h2 { margin: 0; font-size: 20px; font-weight: 650; line-height: 1.35; }
+  .qr-close { flex: none; width: 40px; height: 40px; margin: -6px -6px 0 0; border: 0; border-radius: 50%; background: var(--tint); color: var(--text); font-size: 20px; cursor: pointer; display: grid; place-items: center; }
+  .qr-body { padding: 16px 20px 20px; }
+  .qr-image { background: #fff; border-radius: 20px; border: 1px solid var(--line); padding: 10px; }
+  .qr-image img { display: block; width: 100%; height: auto; aspect-ratio: 640 / 760; }
+  .qr-status { margin: 8px 0 0; min-height: 1.2em; font-size: 14px; color: var(--muted); }
+  .qr-link { display: block; margin: 6px 0 14px; font-size: 14px; color: var(--muted); }
+  .qr-link input {
+    display: block; width: 100%; height: 44px; margin-top: 4px; padding: 0 12px;
+    border: 1px solid var(--line); border-radius: 12px; background: var(--bg); color: var(--text); font: inherit; font-size: 14px;
+  }
+  .qr-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+  .qr-btn {
+    flex: 1 1 160px; min-height: 46px; padding: 0 16px;
+    display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    border: 1.5px solid var(--green-ink); border-radius: 999px;
+    background: transparent; color: var(--green-ink); font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+  }
+  .qr-btn.primary { background: var(--green); border-color: var(--green); color: #fff; }
+  .qr-hint { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+
+  /* แถบประกาศ */
+  .notice-bar { background: var(--yellow); color: #2B2405; }
+  .notice-bar .wrap {
+    display: flex; align-items: center; gap: 12px;
+    min-height: 52px; padding-top: max(8px, env(safe-area-inset-top)); padding-bottom: 8px;
+  }
+  .notice-bar i { font-size: 22px; flex: none; }
+  .notice-bar p { margin: 0; flex: 1; font-weight: 500; line-height: 1.45; }
+  .notice-bar a { color: inherit; font-weight: 600; white-space: nowrap; }
+  .notice-bar button {
+    flex: none; width: 40px; height: 40px; border: 0; border-radius: 50%;
+    background: transparent; color: inherit; font-size: 20px; cursor: pointer; display: grid; place-items: center;
+  }
+  .notice-bar button:hover { background: rgba(43, 36, 5, .1); }
+  .notice-bar :focus-visible { outline-color: #2B2405; }
+  .notice-bar + .top { padding-top: 16px; }
+
+  /* แถวบนสุดแบบ bento: ช่องใหญ่ชื่อระบบและค้นหา ช่องเล็กระบบที่ใช้ล่าสุด */
+  .top {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 14px;
+    padding-top: max(16px, env(safe-area-inset-top));
+  }
+  .hero {
+    background: var(--green);
+    color: #fff;
+    border-radius: var(--r-lg);
+    padding: clamp(22px, 4vw, 40px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: clamp(20px, 4vw, 44px);
+  }
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 650;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  .hero p { margin: 4px 0 0; color: var(--yellow); font-size: clamp(16px, 2.2vw, 19px); font-weight: 500; }
+  .search { position: relative; max-width: 520px; }
+  .search i {
+    position: absolute; left: 18px; top: 50%; transform: translateY(-50%);
+    font-size: 21px; color: #5B6A60; pointer-events: none;
+  }
+  .search input {
+    width: 100%; height: 54px; padding: 0 18px 0 50px;
+    border: 0; border-radius: 999px;
+    background: #fff; color: #14201A;
+    font: inherit; font-size: 17px;
+  }
+  .search input::placeholder { color: #6C7A70; }
+  .search input:focus-visible { outline: 3px solid var(--yellow); outline-offset: 2px; }
+
+  .recent {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-lg);
+    padding: 20px;
+  }
+  .recent h2 { margin: 0 0 10px; font-size: 17px; font-weight: 600; }
+  .recent p { margin: 0; color: var(--muted); font-size: 15px; }
+  .recent a {
+    display: flex; align-items: center; gap: 12px;
+    min-height: 52px; padding: 6px 8px; margin: 0 -8px;
+    border-radius: var(--r-sm);
+    color: inherit; text-decoration: none; font-weight: 500; line-height: 1.35;
+  }
+  .recent a:hover { background: var(--tint); }
+  .recent .badge { width: 40px; height: 40px; border-radius: 12px; font-size: 21px; }
+
+  .filters {
+    position: sticky; top: 0; z-index: 5;
+    background: var(--bg);
+    margin-top: 6px;
+  }
+  .filters-inner {
+    display: flex; gap: 8px;
+    padding-top: 10px; padding-bottom: 10px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .filters-inner::-webkit-scrollbar { display: none; }
+  .filter {
+    flex: none;
+    min-height: 44px; padding: 0 18px;
+    border: 1px solid var(--line); border-radius: 999px;
+    background: var(--surface); color: var(--text);
+    font: inherit; font-weight: 500; white-space: nowrap; cursor: pointer;
+  }
+  .filter[aria-pressed="true"] { background: var(--green); border-color: var(--green); color: #fff; }
+
+  main { padding-top: 8px; padding-bottom: 36px; }
+  .group { margin-top: 22px; }
+  .group-head { display: flex; align-items: baseline; gap: 10px; margin: 0 4px 12px; }
+  .group-head h2 { margin: 0; font-size: clamp(19px, 2.6vw, 23px); font-weight: 650; }
+  .group-head span { color: var(--muted); font-size: 15px; }
+
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
+    gap: 12px;
+  }
+  .tile {
+    display: flex; flex-direction: column; gap: 12px;
+    min-height: 156px; padding: 18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-md);
+    color: inherit; text-decoration: none;
+  }
+  a.tile:hover { border-color: var(--green-ink); }
+  a.tile:active { background: var(--tint); }
+  .tile.pending, .tile.paused { border-style: dashed; color: var(--muted); }
+  .tile.pending .badge, .tile.paused .badge { filter: grayscale(1); opacity: .5; }
+  .tile-top { position: relative; display: flex; align-items: flex-start; }
+  /* ป้ายเกาะมุมไอคอนแบบหน้าจอแอป เพื่อไม่ชนปุ่ม QR บนการ์ดแคบ */
+  .tile-top .flag { position: absolute; left: 36px; top: -9px; border: 2px solid var(--surface); }
+  .flag {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 2px 10px; border-radius: 999px;
+    font-size: 13px; font-weight: 600; line-height: 1.5; white-space: nowrap;
+  }
+  .flag.new { background: var(--yellow); color: #2B2405; }
+  .flag.pin { background: var(--tint); color: var(--green-ink); }
+  .flag.pin i { font-size: 15px; }
+  .tile-state { font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 4px; }
+  .group.pinned .group-head h2 { display: flex; align-items: center; gap: 6px; }
+  .badge {
+    flex: none; width: 56px; height: 56px; border-radius: 16px;
+    display: grid; place-items: center; font-size: 29px; overflow: hidden;
+  }
+  .badge img { width: 100%; height: 100%; object-fit: cover; }
+  .tile-name { font-size: 17px; font-weight: 600; line-height: 1.35; }
+  .tile-desc {
+    font-size: 14px; color: var(--muted); line-height: 1.45;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  }
+
+  .notice {
+    margin-top: 22px; padding: 28px 22px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
+    color: var(--muted);
+  }
+  .notice strong { display: block; color: var(--text); font-size: 18px; font-weight: 600; }
+  .notice-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .notice-actions .qr-btn { flex: 0 1 auto; }
+  .loading-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(176px, 1fr)); gap: 12px; margin-top: 22px; }
+  .loading-tiles span { height: 156px; border-radius: var(--r-md); background: var(--surface); border: 1px solid var(--line); }
+  @media (prefers-reduced-motion: no-preference) {
+    .loading-tiles span { animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 50% { opacity: .45; } }
+  }
+
+  footer {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 20px;
+    padding-top: 4px; padding-bottom: max(28px, env(safe-area-inset-bottom));
+    font-size: 14px; color: var(--muted);
+  }
+  footer a { color: var(--green-ink); }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    a.tile, .qr-open { transition: transform .15s ease, border-color .15s ease; }
+    a.tile:hover, .tile-wrap:hover a.tile, .tile-wrap:hover .qr-open { transform: translateY(-3px); }
+  }
+  @media (max-width: 820px) {
+    .top { grid-template-columns: 1fr; }
+    .recent.empty { display: none; }
+    .recent-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0 12px; }
+  }
+  @media (max-width: 480px) {
+    .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .tile { min-height: 148px; padding: 14px; }
+    .badge { width: 50px; height: 50px; font-size: 26px; }
+    .tile-name { font-size: 16px; }
+    .flag.pin .flag-text { display: none; }
+    .flag.pin { padding: 2px 6px; }
+    .qr-open { top: 10px; right: 10px; width: 36px; height: 36px; }
+  }
 </style>
 </head>
 <body>
-<iframe id="app" title="รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี" allow="clipboard-write"></iframe>
+
+<div id="noticeBar" class="notice-bar" role="region" aria-label="ประกาศ" hidden>
+  <div class="wrap">
+    <i class="ti ti-speakerphone" aria-hidden="true"></i>
+    <p><span id="noticeText"></span> <a id="noticeLink" href="#" hidden>ดูรายละเอียด</a></p>
+    <button id="noticeClose" type="button" aria-label="ปิดประกาศ"><i class="ti ti-x" aria-hidden="true"></i></button>
+  </div>
+</div>
+
+<header class="wrap top">
+  <div class="hero">
+    <div class="hero-brand">
+      <img id="heroLogo" class="hero-logo" alt="โลโก้โรงเรียน" hidden>
+      <div>
+        <h1 id="appTitle">รวมระบบงาน</h1>
+        <p id="schoolName">โรงเรียนเทพศิรินทร์พุแค สระบุรี</p>
+      </div>
+    </div>
+    <label class="search">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <input id="search" type="search" placeholder="พิมพ์ชื่อระบบที่ต้องการ" aria-label="ค้นหาระบบ" autocomplete="off" enterkeyhint="search">
+    </label>
+  </div>
+  <section id="recent" class="recent empty" aria-labelledby="recentTitle">
+    <h2 id="recentTitle">ใช้ล่าสุด</h2>
+    <div id="recentList" class="recent-list"></div>
+  </section>
+</header>
+
+<nav class="filters" aria-label="กรองตามหมวด">
+  <div class="wrap filters-inner" id="filters"></div>
+</nav>
+
+<main class="wrap" id="board"></main>
+
+<footer class="wrap">
+  <span>ผู้พัฒนาระบบ <span id="developer">นายนิมิต ศรีวัฒนะ</span></span>
+  <span class="footer-links">
+    <button id="hubQrBtn" class="link-btn" type="button">QR code ของหน้านี้</button>
+    <a id="adminLink" href="#">เข้าหน้าผู้ดูแล</a>
+  </span>
+</footer>
+
+<dialog id="qrDialog" class="qr-dialog" aria-labelledby="qrTitle">
+  <div class="qr-head">
+    <h2 id="qrTitle"></h2>
+    <button class="qr-close" type="button" data-close aria-label="ปิด"><i class="ti ti-x" aria-hidden="true"></i></button>
+  </div>
+  <div class="qr-body">
+    <div class="qr-image"><img id="qrImage" alt=""></div>
+    <p id="qrStatus" class="qr-status" role="status"></p>
+    <label class="qr-link"><span>ลิงก์</span>
+      <input id="qrUrl" type="text" readonly></label>
+    <div class="qr-actions">
+      <a id="qrDownload" class="qr-btn primary" href="#" download><i class="ti ti-download" aria-hidden="true"></i> ดาวน์โหลดรูป QR</a>
+      <button id="qrCopy" class="qr-btn" type="button"><i class="ti ti-copy" aria-hidden="true"></i> คัดลอกลิงก์</button>
+    </div>
+    <p class="qr-hint">บนมือถือ กดค้างที่รูปเพื่อบันทึกได้เช่นกัน</p>
+  </div>
+</dialog>
+
 <script>
-  // ลิงก์เว็บแอป Apps Script ในรูปแบบ /a/~/macros/s/<รหัส>/exec
-  // ต่างจากลิงก์ที่หน้า "ทำให้ใช้งานได้" ให้มา รูปแบบนี้ทำให้มือถือที่ล็อกอิน Google หลายบัญชีเปิดได้
-  // (ทดสอบแล้วบนมือถือหลายบัญชี ลิงก์แบบ /a/macros/<โดเมน>/s/ และ /a/<โดเมน>/macros/s/ เปิดไม่ได้)
-  var APP_URL = 'https://script.google.com/a/~/macros/s/AKfycbyTZwYOU4uGP2Y-y4tZlASts5x833WLi2UbPwVHy9RDmBFDw4EqfnYqFPuU6lkn_tpoIg/exec';
+  var DATA = null;
+  var state = { category: 'all', query: '' };
+  var RECENT_KEY = 'hubRecent';
 
-  // เปิดหน้า GitHub นี้พร้อม ?page=admin จะได้หน้าผู้ดูแล ลิงก์บนแถบที่อยู่จึงเป็นของ GitHub ทั้งหมด
-  var page = new URLSearchParams(location.search).get('page');
-  var isAdmin = page === 'admin';
-  // via=github บอกเว็บแอปว่าเปิดผ่านหน้านี้ เวลากดลิงก์ เว็บแอปจะขอให้หน้านี้เป็นผู้เปิดแทน
-  document.getElementById('app').src = APP_URL + '?via=github' + (isAdmin ? '&page=admin' : '');
-
-  // ตรวจว่าผู้ส่งคือกรอบเว็บแอปที่ฝังอยู่ในหน้านี้เอง (Apps Script ซ้อนกรอบหลายชั้น จึงไล่หาลงไป)
-  // เว็บอื่นที่เปิดหน้านี้เป็นหน้าต่างใหม่จึงสั่งให้หน้านี้เปลี่ยนไปเว็บอื่นไม่ได้
-  function isOwnFrame(source) {
-    function walk(win, depth) {
-      if (depth > 5) return false;
-      for (var i = 0; i < win.frames.length; i++) {
-        var child = win.frames[i];
-        if (child === source || walk(child, depth + 1)) return true;
-      }
-      return false;
-    }
-    try { return walk(window, 0); } catch (err) { return false; }
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
   }
 
-  // รับคำขอเปิดลิงก์จากเว็บแอป: ต้องมาจากกรอบของหน้านี้ จากโดเมนของ Google Apps Script และเป็นลิงก์ https เท่านั้น
-  window.addEventListener('message', function (e) {
-    var data = e.data || {};
-    if (data.type !== 'dsps-hub-open' || typeof data.url !== 'string') return;
-    if (!isOwnFrame(e.source)) return;
-    var host = '';
-    try { host = new URL(e.origin).hostname; } catch (err) { return; }
-    if (!/(^|\.)googleusercontent\.com$/.test(host)) return;
-    if (!/^https:\/\//i.test(data.url)) return;
-    try { e.source.postMessage({ type: 'dsps-hub-opening', url: data.url }, e.origin); } catch (err) {}
-    location.assign(data.url);
+  function isLink(url) { return /^https?:\/\//i.test(url); }
+
+  function isLight(hex) {
+    var m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
+    if (!m) return false;
+    var n = parseInt(m[1], 16);
+    var lum = 0.299 * (n >> 16) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255);
+    return lum > 160;
+  }
+
+  function badge(system) {
+    var box = el('span', 'badge');
+    var color = /^#[0-9a-f]{6}$/i.test(system.color) ? system.color : '#17603A';
+    var src = system.iconType === 'image' ? imageSrc(system.icon) : '';
+    if (src) {
+      var img = el('img');
+      img.src = src;
+      img.alt = '';
+      img.loading = 'lazy';
+      box.style.background = '#fff';
+      box.appendChild(img);
+    } else {
+      var name = (system.icon || 'apps').replace(/[^a-z0-9-]/gi, '');
+      var icon = el('i', 'ti ti-' + name);
+      icon.setAttribute('aria-hidden', 'true');
+      box.style.background = color;
+      box.style.color = isLight(color) ? '#14201A' : '#fff';
+      box.appendChild(icon);
+    }
+    return box;
+  }
+
+  /* ระบบที่เปิดล่าสุด เก็บไว้ในเบราว์เซอร์ของผู้ใช้แต่ละคน */
+  function readRecent() {
+    try { return JSON.parse(localStorage.getItem(RECENT_KEY)) || []; } catch (e) { return []; }
+  }
+  function remember(id) {
+    try {
+      var list = readRecent().filter(function (x) { return x !== id; });
+      list.unshift(id);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, 3)));
+    } catch (e) {}
+  }
+
+  function renderRecent() {
+    var box = document.getElementById('recent');
+    var list = document.getElementById('recentList');
+    list.textContent = '';
+    var items = [];
+    readRecent().forEach(function (id) {
+      DATA.systems.forEach(function (s) { if (s.id === id && canOpen(s)) items.push(s); });
+    });
+    box.classList.toggle('empty', !items.length);
+    if (!items.length) {
+      list.appendChild(el('p', null, 'ระบบที่คุณเปิดจะมาอยู่ตรงนี้ เพื่อให้กลับมาเปิดได้เร็วขึ้น'));
+      return;
+    }
+    items.forEach(function (s) {
+      var link = el('a');
+      link.href = s.url;
+      link.appendChild(badge(s));
+      link.appendChild(el('span', null, s.name));
+      link.addEventListener('click', function () { remember(s.id); });
+      list.appendChild(link);
+    });
+  }
+
+  function canOpen(system) { return isLink(system.url) && !system.maintenance; }
+
+  function tileNode(system, inPinnedGroup) {
+    var hasLink = isLink(system.url);
+    var ready = canOpen(system);
+    var node = el(ready ? 'a' : 'div', 'tile' + (ready ? '' : system.maintenance && hasLink ? ' paused' : ' pending'));
+    if (ready) {
+      node.href = system.url;
+      node.addEventListener('click', function () { remember(system.id); });
+    }
+    var top = el('span', 'tile-top');
+    top.appendChild(badge(system));
+    if (ready && system.isNew) {
+      top.appendChild(el('span', 'flag new', 'ใหม่'));
+    } else if (system.pinned && !inPinnedGroup) {
+      var pin = el('span', 'flag pin');
+      var pinIcon = el('i', 'ti ti-pin');
+      pinIcon.setAttribute('aria-hidden', 'true');
+      pin.appendChild(pinIcon);
+      pin.appendChild(el('span', 'flag-text', 'ปักหมุด'));
+      pin.setAttribute('aria-label', 'ปักหมุด');
+      top.appendChild(pin);
+    }
+    node.appendChild(top);
+    var text = el('span');
+    text.style.display = 'grid';
+    text.style.gap = '2px';
+    text.appendChild(el('span', 'tile-name', system.name));
+    if (ready) {
+      text.appendChild(el('span', 'tile-desc', system.description));
+    } else {
+      var state = el('span', 'tile-state');
+      var stateIcon = el('i', 'ti ' + (system.maintenance && hasLink ? 'ti-tool' : 'ti-link-off'));
+      stateIcon.setAttribute('aria-hidden', 'true');
+      state.appendChild(stateIcon);
+      state.appendChild(document.createTextNode(system.maintenance && hasLink ? 'ปิดปรับปรุงชั่วคราว' : 'ยังไม่ได้ใส่ลิงก์'));
+      text.appendChild(state);
+    }
+    node.appendChild(text);
+    return node;
+  }
+
+  /* การ์ดที่เปิดได้จะมีปุ่ม QR ที่มุมขวาบน (วางนอกลิงก์ เพราะปุ่มซ้อนในลิงก์ไม่ได้) */
+  function tileWithQr(system, inPinnedGroup) {
+    var tile = tileNode(system, inPinnedGroup);
+    if (!canOpen(system)) return tile;
+    var wrap = el('div', 'tile-wrap');
+    wrap.appendChild(tile);
+    var button = el('button', 'qr-open');
+    button.type = 'button';
+    button.setAttribute('aria-label', 'QR code ของ ' + system.name);
+    button.title = 'QR code';
+    var icon = el('i', 'ti ti-qrcode');
+    icon.setAttribute('aria-hidden', 'true');
+    button.appendChild(icon);
+    button.addEventListener('click', function () { openQr(system.name, system.url); });
+    wrap.appendChild(button);
+    return wrap;
+  }
+
+  function groupNode(name, list, extraClass, inPinnedGroup) {
+    var group = el('section', 'group' + (extraClass ? ' ' + extraClass : ''));
+    var head = el('div', 'group-head');
+    var title = el('h2');
+    if (inPinnedGroup) {
+      var icon = el('i', 'ti ti-pin');
+      icon.setAttribute('aria-hidden', 'true');
+      title.appendChild(icon);
+    }
+    title.appendChild(document.createTextNode(name));
+    head.appendChild(title);
+    head.appendChild(el('span', null, list.length + ' ระบบ'));
+    var tiles = el('div', 'tiles');
+    list.forEach(function (s) { tiles.appendChild(tileWithQr(s, inPinnedGroup)); });
+    group.appendChild(head);
+    group.appendChild(tiles);
+    return group;
+  }
+
+  function notice(title, detail) {
+    var box = el('div', 'notice');
+    box.appendChild(el('strong', null, title));
+    box.appendChild(document.createTextNode(detail));
+    return box;
+  }
+
+
+  /* ---------- QR code ---------- */
+  var qrLibrary = null;
+  function loadQrLibrary() {
+    if (qrLibrary) return qrLibrary;
+    qrLibrary = new Promise(function (resolve, reject) {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js';
+      script.onload = function () {
+        if (window.qrcode && qrcode.stringToBytesFuncs && qrcode.stringToBytesFuncs['UTF-8']) {
+          qrcode.stringToBytes = qrcode.stringToBytesFuncs['UTF-8'];
+        }
+        window.qrcode ? resolve(window.qrcode) : reject(new Error('load'));
+      };
+      script.onerror = function () { qrLibrary = null; reject(new Error('load')); };
+      document.head.appendChild(script);
+    });
+    return qrLibrary;
+  }
+
+  function wrapLines(ctx, text, maxWidth) {
+    var words = text.split(' ');
+    var lines = [];
+    var line = '';
+    words.forEach(function (word) {
+      var test = line ? line + ' ' + word : word;
+      if (ctx.measureText(test).width > maxWidth && line) { lines.push(line); line = word; }
+      else line = test;
+    });
+    if (line) lines.push(line);
+    // คำไทยไม่มีช่องว่าง ถ้ายังยาวเกินให้ตัดทีละตัวอักษร
+    var out = [];
+    lines.forEach(function (l) {
+      var cur = '';
+      Array.from(l).forEach(function (ch) {
+        if (ctx.measureText(cur + ch).width > maxWidth && cur) { out.push(cur); cur = ch; }
+        else cur += ch;
+      });
+      out.push(cur);
+    });
+    return out.slice(0, 2);
+  }
+
+  /* วาดรูป QR พร้อมชื่อระบบใต้ภาพ ขนาด 640x760 สำหรับพิมพ์หรือใส่สไลด์ */
+  function drawQrCard(qr, url, name) {
+    var q = qr(0, 'M');
+    q.addData(url);
+    q.make();
+    var count = q.getModuleCount();
+    var canvas = document.createElement('canvas');
+    canvas.width = 640;
+    canvas.height = 760;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, 640, 760);
+    var size = 520;
+    var cell = Math.floor(size / count);
+    var drawn = cell * count;
+    var x0 = Math.round((640 - drawn) / 2);
+    var y0 = 40 + Math.round((size - drawn) / 2);
+    ctx.fillStyle = '#0E2A1B';
+    for (var r = 0; r < count; r++) {
+      for (var c = 0; c < count; c++) {
+        if (q.isDark(r, c)) ctx.fillRect(x0 + c * cell, y0 + r * cell, cell, cell);
+      }
+    }
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillStyle = '#14201A';
+    ctx.font = '600 34px Anuphan, "Noto Sans Thai", sans-serif';
+    var lines = wrapLines(ctx, name, 560);
+    var y = lines.length > 1 ? 622 : 640;
+    lines.forEach(function (line, i) { ctx.fillText(line, 320, y + i * 44); });
+    ctx.fillStyle = '#17603A';
+    ctx.font = '500 22px Anuphan, "Noto Sans Thai", sans-serif';
+    ctx.fillText(DATA.school, 320, 726);
+    return canvas.toDataURL('image/png');
+  }
+
+  function safeFileName(name) {
+    return 'QR-' + name.replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, '-').slice(0, 60) + '.png';
+  }
+
+  function openQr(name, url) {
+    var dialog = document.getElementById('qrDialog');
+    var img = document.getElementById('qrImage');
+    var status = document.getElementById('qrStatus');
+    var download = document.getElementById('qrDownload');
+    document.getElementById('qrTitle').textContent = name;
+    document.getElementById('qrUrl').value = url;
+    img.removeAttribute('src');
+    img.alt = '';
+    download.hidden = true;
+    status.textContent = 'กำลังสร้าง QR code';
+    dialog.showModal();
+    var fontReady = document.fonts && document.fonts.load ? document.fonts.load('600 34px Anuphan').catch(function () {}) : Promise.resolve();
+    Promise.all([loadQrLibrary(), fontReady]).then(function (res) {
+      var png = drawQrCard(res[0], url, name);
+      img.src = png;
+      img.alt = 'QR code ของ ' + name;
+      download.href = png;
+      download.setAttribute('download', safeFileName(name));
+      download.hidden = false;
+      status.textContent = '';
+    }).catch(function () {
+      status.textContent = 'สร้าง QR code ไม่ได้ ตรวจสอบการเชื่อมต่ออินเทอร์เน็ตแล้วลองใหม่';
+    });
+  }
+
+  document.getElementById('qrCopy').addEventListener('click', function () {
+    var input = document.getElementById('qrUrl');
+    var status = document.getElementById('qrStatus');
+    function fallback() {
+      input.focus();
+      input.select();
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) {}
+      status.textContent = ok ? 'คัดลอกลิงก์แล้ว' : 'เลือกลิงก์ไว้ให้แล้ว กดคัดลอกเองได้เลย';
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(input.value).then(function () {
+        status.textContent = 'คัดลอกลิงก์แล้ว';
+      }, fallback);
+    } else {
+      fallback();
+    }
   });
-  if (isAdmin) {
-    document.title = 'หน้าผู้ดูแล รวมระบบงาน โรงเรียนเทพศิรินทร์พุแค สระบุรี';
-    var robots = document.createElement('meta');
-    robots.name = 'robots';
-    robots.content = 'noindex';
-    document.head.appendChild(robots);
+  document.querySelectorAll('#qrDialog [data-close]').forEach(function (button) {
+    button.addEventListener('click', function () { document.getElementById('qrDialog').close(); });
+  });
+  document.getElementById('qrDialog').addEventListener('click', function (e) {
+    if (e.target === this) this.close();
+  });
+  document.getElementById('hubQrBtn').addEventListener('click', function () {
+    openQr(DATA ? DATA.title : document.getElementById('appTitle').textContent, hubLink());
+  });
+
+  /* แถบประกาศ: ปิดแล้วจะไม่แสดงซ้ำจนกว่าข้อความประกาศจะเปลี่ยน */
+  var NOTICE_KEY = 'hubNoticeClosed';
+  function renderNotice() {
+    var n = DATA.notice;
+    var bar = document.getElementById('noticeBar');
+    if (!n || !n.text) { bar.hidden = true; return; }
+    var sig = n.text + '|' + n.url;
+    try { if (localStorage.getItem(NOTICE_KEY) === sig) { bar.hidden = true; return; } } catch (e) {}
+    document.getElementById('noticeText').textContent = n.text;
+    var link = document.getElementById('noticeLink');
+    link.hidden = !isLink(n.url);
+    if (isLink(n.url)) link.href = n.url;
+    bar.hidden = false;
+    document.getElementById('noticeClose').onclick = function () {
+      bar.hidden = true;
+      try { localStorage.setItem(NOTICE_KEY, sig); } catch (e) {}
+    };
+  }
+
+  function renderFilters() {
+    var wrap = document.getElementById('filters');
+    wrap.textContent = '';
+    [{ id: 'all', name: 'ทั้งหมด' }].concat(DATA.categories).forEach(function (cat) {
+      var button = el('button', 'filter', cat.name);
+      button.type = 'button';
+      button.setAttribute('aria-pressed', String(state.category === cat.id));
+      button.addEventListener('click', function () {
+        state.category = cat.id;
+        renderFilters();
+        renderBoard();
+      });
+      wrap.appendChild(button);
+    });
+  }
+
+  function renderBoard() {
+    var board = document.getElementById('board');
+    board.textContent = '';
+    if (!DATA.systems.length) {
+      board.appendChild(notice('ยังไม่มีระบบในรายการ', 'ผู้ดูแลเพิ่มระบบได้จากหน้าผู้ดูแล'));
+      return;
+    }
+    var query = state.query.trim().toLowerCase();
+    var known = {};
+    DATA.categories.forEach(function (c) { known[c.id] = true; });
+    var groups = DATA.categories.slice();
+    if (DATA.systems.some(function (s) { return !known[s.categoryId]; })) {
+      groups.push({ id: '', name: 'อื่น ๆ', other: true });
+    }
+    var shown = 0;
+    // หน้า "ทั้งหมด" ที่ไม่ได้ค้นหา: ระบบที่ปักหมุดขึ้นแถวบนสุดแทนการอยู่ในหมวด
+    var pinView = state.category === 'all' && !query;
+    if (pinView) {
+      var pinned = DATA.systems.filter(function (s) { return s.pinned; });
+      if (pinned.length) {
+        shown += pinned.length;
+        board.appendChild(groupNode('ปักหมุด', pinned, 'pinned', true));
+      }
+    }
+    groups.forEach(function (cat) {
+      if (state.category !== 'all' && state.category !== cat.id) return;
+      var list = DATA.systems.filter(function (s) {
+        var inCat = cat.other ? !known[s.categoryId] : s.categoryId === cat.id;
+        var hit = !query || (s.name + ' ' + s.description).toLowerCase().indexOf(query) !== -1;
+        return inCat && hit && !(pinView && s.pinned);
+      });
+      if (!list.length) return;
+      shown += list.length;
+      board.appendChild(groupNode(cat.name, list));
+    });
+    if (!shown) {
+      board.appendChild(query
+        ? notice('ไม่พบระบบที่ตรงกับ "' + state.query.trim() + '"', 'ลองพิมพ์คำที่สั้นลง หรือเลือกหมวด "ทั้งหมด"')
+        : notice('หมวดนี้ยังไม่มีระบบ', 'เลือกหมวดอื่นจากแถบด้านบน'));
+    }
+  }
+
+  /* รูปที่เก็บในชีต อ้างอิงเป็น 'img:รหัส' ข้อมูลรูปส่งมาพร้อมข้อมูลหน้ารวม */
+  function imageSrc(ref) {
+    var m = /^img:([A-Za-z0-9]+)$/.exec(ref || '');
+    if (m) return (DATA && DATA.images && DATA.images[m[1]]) || '';
+    return isLink(ref) ? ref : '';
+  }
+
+  /* ลิงก์ของหน้ารวม สำหรับทำ QR: ใช้ลิงก์ที่ตั้งในหน้าผู้ดูแลก่อน */
+  function hubLink() {
+    if (DATA && isLink(DATA.hubUrl)) return DATA.hubUrl;
+    return IN_GAS ? BOOT.execUrl : location.origin + location.pathname;
+  }
+
+  function applyData(data) {
+    DATA = data;
+    document.getElementById('appTitle').textContent = DATA.title;
+    document.getElementById('schoolName').textContent = DATA.school;
+    document.getElementById('developer').textContent = DATA.developer;
+    document.title = DATA.title + ' ' + DATA.school;
+    document.getElementById('adminLink').href = IN_GAS ? DATA.adminUrl : '?page=admin';
+    var heroLogo = document.getElementById('heroLogo');
+    var logo = imageSrc(DATA.logo);
+    heroLogo.hidden = !logo;
+    if (logo) {
+      heroLogo.onerror = function () { heroLogo.hidden = true; };
+      if (heroLogo.getAttribute('src') !== logo) heroLogo.src = logo;
+    }
+    renderNotice();
+    renderFilters();
+    renderBoard();
+    renderRecent();
+  }
+
+  function showLoading() {
+    var board = document.getElementById('board');
+    board.textContent = '';
+    var box = el('div', 'loading-tiles');
+    box.setAttribute('aria-label', 'กำลังโหลดรายการระบบ');
+    for (var i = 0; i < 6; i++) box.appendChild(el('span'));
+    board.appendChild(box);
+  }
+
+  function showLoadError() {
+    var board = document.getElementById('board');
+    board.textContent = '';
+    var box = notice('โหลดรายการระบบไม่ได้', 'ตรวจสอบอินเทอร์เน็ตแล้วกดลองใหม่ หรือเปิดลิงก์สำรองของระบบ');
+    var actions = el('div', 'notice-actions');
+    var retry = el('button', 'qr-btn primary', 'ลองใหม่');
+    retry.type = 'button';
+    retry.addEventListener('click', function () { showLoading(); loadHub(); });
+    var backup = el('a', 'qr-btn', 'เปิดลิงก์สำรอง');
+    backup.href = BACKUP_URL;
+    actions.appendChild(retry);
+    actions.appendChild(backup);
+    box.appendChild(actions);
+    board.appendChild(box);
+  }
+
+  /* ขอข้อมูลจาก Apps Script แบบไม่ส่งข้อมูลการล็อกอิน (credentials: omit)
+     Google จึงไม่ต้องเลือกบัญชี ใช้ได้บนมือถือที่ล็อกอินหลายบัญชี */
+  function apiGet(query) {
+    var i = 0;
+    function attempt() {
+      return fetch(API_URLS[i] + '?' + query, { method: 'GET', credentials: 'omit', cache: 'no-store', redirect: 'follow' })
+        .then(function (r) {
+          if (!r.ok) throw new Error('HTTP ' + r.status);
+          return r.json();
+        })
+        .catch(function (err) {
+          i++;
+          if (i < API_URLS.length) return attempt();
+          throw err;
+        });
+    }
+    return attempt();
+  }
+
+  /* ข้อมูลล่าสุดเก็บไว้ในเครื่อง เปิดครั้งต่อไปแสดงได้ทันที แล้วค่อยอัปเดตเมื่อได้ข้อมูลใหม่ */
+  var CACHE_KEY = 'hubData:v1';
+  function loadHub() {
+    return apiGet('action=hub').then(function (data) {
+      if (!data || !Array.isArray(data.systems)) throw new Error('ข้อมูลไม่ถูกต้อง');
+      var text = JSON.stringify(data);
+      var same = DATA && JSON.stringify(DATA) === text;
+      if (!same) applyData(data);
+      try { localStorage.setItem(CACHE_KEY, text); } catch (e) {}
+    }).catch(function () {
+      if (!DATA) showLoadError();
+    });
+  }
+
+  var searchInput = document.getElementById('search');
+  searchInput.addEventListener('input', function (e) {
+    state.query = e.target.value;
+    if (DATA) renderBoard();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === '/' && document.activeElement !== searchInput) {
+      e.preventDefault();
+      searchInput.focus();
+    }
+  });
+  window.addEventListener('pageshow', function () { if (DATA) renderRecent(); });
+
+  if (IN_GAS) {
+    applyData(BOOT.data);
+  } else {
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || 'null'); } catch (e) { cached = null; }
+    if (cached && Array.isArray(cached.systems)) applyData(cached);
+    else showLoading();
+    loadHub();
   }
 </script>
 </body>
